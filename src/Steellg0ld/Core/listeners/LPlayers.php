@@ -2,7 +2,6 @@
 
 namespace Steellg0ld\Core\listeners;
 
-use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -11,6 +10,8 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\item\Item;
 use pocketmine\Server;
 use Steellg0ld\Core\forms\NaviguateUI;
+use Steellg0ld\Core\forms\SpellsBookUI;
+use Steellg0ld\Core\games\Combat;
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
 
@@ -36,6 +37,7 @@ class LPlayers implements Listener{
             Server::getInstance()->broadcastMessage(Plugin::PREFIX . Plugin::SECOND_COLOR . " " . $player->getName() . " c'est connecté(e) pour la première fois !");
         }
 
+        var_dump($player->getStats());
         $player->teleport(Plugin::getSpawn());
         $player->getInventory()->setContents([]);
         $player->getInventory()->setItem(4,Item::get(345)); // TODO: Item custom :)
@@ -66,6 +68,10 @@ class LPlayers implements Listener{
             switch ($event->getItem()->getId()){
                 case Item::COMPASS:
                     NaviguateUI::openCompassUI($player);
+                    break;
+                case 1001:
+                    if($player->getGame() !== Combat::IDENTIFIER) return;
+                    SpellsBookUI::openBook($player);
                     break;
             }
         }
