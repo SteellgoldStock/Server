@@ -1,0 +1,7 @@
+name: PluginCore
+main: Steellg0ld\Core\Plugin
+version: 1.0
+api: [3.0.0]
+authors:
+  - Steellg0ld
+  - ViewersTwitch
