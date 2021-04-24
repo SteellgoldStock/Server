@@ -4,6 +4,7 @@ namespace Steellg0ld\Core\games;
 
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
+use Steellg0ld\Core\tasks\ManaBarTask;
 
 class Combat {
 
@@ -18,7 +19,8 @@ class Combat {
     public function addPlayer(Player $player){
         array_push($this->players, $player->getName());
         $player->sendMessage(Plugin::PREFIX . Plugin::SECOND_COLOR . " Vous avez rejoint le mode de jeu: " . Plugin::BASE_COLOR . self::NAME . Plugin::SECOND_COLOR . " !");
-        $player->setGame("COMBAT");
+        $player->setGame(self::IDENTIFIER);
+        Plugin::getInstance()->getScheduler()->scheduleRepeatingTask(new ManaBarTask($player), 20 * 5);
     }
 
     public function getPlayers(): array{
