@@ -24,6 +24,15 @@ class SQL {
         return $data[0];
     }
 
+    public function getSettings($player): array {
+        $data = array();
+        $query = self::getDatabase()->query("SELECT * FROM players_settings WHERE player = '$player'");
+        while ($res = $query->fetchArray(1)){
+            array_push($data,$res);
+        }
+        return $data[0];
+    }
+
     public function update($dat, $whe, $col, $val)  {
         self::getDatabase()->query("UPDATE '$dat' SET '$col' = '$val'  WHERE player = '$whe'");
     }
