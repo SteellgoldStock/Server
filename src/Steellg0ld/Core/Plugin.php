@@ -17,6 +17,7 @@ class Plugin extends PluginBase {
     const BASE_COLOR = "§e";
     const SECOND_COLOR = "§f";
     const SERVER_NAME = "Arkanya";
+    const MANA = "§b";
 
     public static $instance;
 
