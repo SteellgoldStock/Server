@@ -7,9 +7,11 @@ use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemHeldEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\Item;
 use pocketmine\Server;
 use Steellg0ld\Core\forms\NaviguateUI;
+use Steellg0ld\Core\forms\SettingsUI;
 use Steellg0ld\Core\forms\SpellsBookUI;
 use Steellg0ld\Core\games\Combat;
 use Steellg0ld\Core\Player;
@@ -41,7 +43,19 @@ class LPlayers implements Listener{
         $player->cooldown = time();
         $player->teleport(Plugin::getSpawn());
         $player->getInventory()->setContents([]);
-        $player->getInventory()->setItem(4,Item::get(345)); // TODO: Item custom :)
+        $player->getInventory()->setItem(4,Item::get(345));
+        $player->getInventory()->setItem(1,Item::get(1002));
+    }
+
+    /**
+     * @param PlayerQuitEvent $event
+     */
+    public function onPlayerQuit(PlayerQuitEvent $event) : void{
+        $player = $event->getPlayer();
+        if(!$player instanceof Player) return;
+        $inv = $player->getOffhandInventory();
+        $item = $inv->getItemInOffhand();
+        $player->namedtag->setTag($item->nbtSerialize(-1, "offhand"));
     }
 
     /**
@@ -73,6 +87,9 @@ class LPlayers implements Listener{
                 case 1001:
                     if($player->getGame() !== Combat::IDENTIFIER) return;
                     SpellsBookUI::openBook($player);
+                    break;
+                case 1002:
+                    SettingsUI::openSettings($player);
                     break;
             }
         }
