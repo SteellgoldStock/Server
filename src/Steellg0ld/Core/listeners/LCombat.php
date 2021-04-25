@@ -37,12 +37,14 @@ class LCombat implements Listener{
      * @param PlayerDeathEvent $event
      */
     public function onDeath(PlayerDeathEvent $event) {
+
         $cause = $event->getEntity()->getLastDamageCause();
         if ($cause instanceof EntityDamageByEntityEvent) {
             $killer = $cause->getDamager();
             $victim = $event->getPlayer();
             if($killer instanceof Player AND $victim instanceof Player){
-                Plugin::getInstance()->getSQL()->update($killer->getName(), "xp",($killer->getStats()["xp"] + mt_rand(1,10)));
+                $victim->getPlayer()->getOffhandInventory()->clearAll();
+                Plugin::getInstance()->getSQL()->update("players", $killer->getName(), "xp",($killer->getStats()["xp"] + mt_rand(1,10)));
             }
         }
     }
