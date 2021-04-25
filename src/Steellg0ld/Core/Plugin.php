@@ -46,7 +46,7 @@ class Plugin extends PluginBase {
     /**
      * @return mixed
      */
-    public static function getInstance() : Plugin {
+    public static function getInstance() {
         return self::$instance;
     }
 
