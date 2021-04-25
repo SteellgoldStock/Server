@@ -8,7 +8,7 @@ use Steellg0ld\Core\Plugin;
 
 class SettingsUI
 {
-    public static function openCompassUI(Player $player)
+    public static function openSettings(Player $player)
     {
         {
             $form = new CustomForm(
@@ -16,7 +16,7 @@ class SettingsUI
                     if ($data === null) {
                     } else {
                         if ($data[3] == true){
-                            Plugin::getInstance()->getSQL()->update($p->getName(),"settings");
+                            Plugin::getInstance()->getSQL()->update("players_settings",$p->getName(),"reconnect",1);
                         }
                     }
                 }
