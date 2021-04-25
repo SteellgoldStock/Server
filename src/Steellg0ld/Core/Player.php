@@ -4,7 +4,9 @@ namespace Steellg0ld\Core;
 
 class Player extends \pocketmine\Player {
 
-    public string $cooldown = "0";
+    public int $cooldown = 0;
+    public int $cooldown_spell = 0;
+
     public string $game = "NONE";
     public array $game_stats = [];
     public int $spell_applied = 0;
@@ -29,6 +31,6 @@ class Player extends \pocketmine\Player {
 
     public function getLevelByXP(Int $xp){
         if($xp < 500) return 0;
-        return $xp / 500;
+        return round($xp / 500);
     }
 }

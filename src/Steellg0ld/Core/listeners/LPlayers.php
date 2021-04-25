@@ -37,7 +37,8 @@ class LPlayers implements Listener{
             Server::getInstance()->broadcastMessage(Plugin::PREFIX . Plugin::SECOND_COLOR . " " . $player->getName() . " c'est connecté(e) pour la première fois !");
         }
 
-        var_dump($player->getStats());
+        $player->cooldown_spell = time();
+        $player->cooldown = time();
         $player->teleport(Plugin::getSpawn());
         $player->getInventory()->setContents([]);
         $player->getInventory()->setItem(4,Item::get(345)); // TODO: Item custom :)
