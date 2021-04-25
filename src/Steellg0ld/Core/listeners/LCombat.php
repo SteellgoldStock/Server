@@ -5,7 +5,6 @@ namespace Steellg0ld\Core\listeners;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
-use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use Steellg0ld\Core\managers\Spells;
@@ -23,23 +22,12 @@ class LCombat implements Listener{
 
         if($damager instanceof Player AND $victim instanceof Player){
             if($victim->protego == true) {
-                $victim->protego = false;
-                $victim->sendTip(Plugin::PREFIX . " Votre protection à été détruite, car un utilisateur de sort à essayé d'en éxécuté un sur vous");
-                $damager->sendTip($victim->getName() . " était protégé(e), vous n'avez donc pas pu utiliser votre sort sur cette personne");
-                $damager->setMotion(new Vector3(5, 0, 5));
+                $spells->Protecto($damager, $victim);
             }
 
-            switch($damager->spell_applied) {
-                case 1:
-                    $victim->getInventory()->setItemInHand($spells->Reducto($victim->getInventory()->getItemInHand()));
-                    $damager->sendTip(Plugin::PREFIX . Plugin::SECOND_COLOR . " Reducto " . Plugin::PREFIX);
-                    break;
-                case 2:
-                    $victim->setOnFire(30);
-                    $damager->sendTip(Plugin::PREFIX . Plugin::SECOND_COLOR . " Incendio " . Plugin::PREFIX);
-                    break;
-                case 3:
-                    $damager->sendTip(Plugin::PREFIX . Plugin::SECOND_COLOR . " Protego " . Plugin::PREFIX);
+            switch ($damager->spell_applied){
+                case 0:
+                    $spells->Reducto($victim->getInventory()->getItemInHand());
                     break;
             }
         }

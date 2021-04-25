@@ -2,6 +2,7 @@
 
 namespace Steellg0ld\Core\games;
 
+use pocketmine\item\Item;
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
 use Steellg0ld\Core\tasks\ManaBarTask;
@@ -20,7 +21,10 @@ class Combat {
         array_push($this->players, $player->getName());
         $player->sendMessage(Plugin::PREFIX . Plugin::SECOND_COLOR . " Vous avez rejoint le mode de jeu: " . Plugin::BASE_COLOR . self::NAME . Plugin::SECOND_COLOR . " !");
         $player->setGame(self::IDENTIFIER);
-        Plugin::getInstance()->getScheduler()->scheduleRepeatingTask(new ManaBarTask($player), 20 * 5);
+        Plugin::getInstance()->getScheduler()->scheduleRepeatingTask(new ManaBarTask($player), 20);
+        $player->mana = 100;
+        $player->getInventory()->setContents([]);
+        $player->getInventory()->setItem(8,Item::get(1001));
     }
 
     public function getPlayers(): array{
