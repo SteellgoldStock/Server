@@ -12,6 +12,7 @@ class SQL {
 
     public function init(){
         $this->getDatabase()->query("CREATE TABLE IF NOT EXISTS players (player TEXT, rank INT, xp INT)");
+        $this->getDatabase()->query("CREATE TABLE IF NOT EXISTS players_settings (player TEXT, show_os INT, receive_messages INT, reconnect INT, cps INT, ping INT, username TEXT, size FLOAT, particles INT, custom_os INT, pet INT)");
     }
 
     public function getPlayer($player): array {
@@ -23,7 +24,7 @@ class SQL {
         return $data[0];
     }
 
-    public function update($whe, $col, $val)  {
-        self::getDatabase()->query("UPDATE players SET '$col' = '$val'  WHERE player = '$whe'");
+    public function update($dat, $whe, $col, $val)  {
+        self::getDatabase()->query("UPDATE '$dat' SET '$col' = '$val'  WHERE player = '$whe'");
     }
 }
