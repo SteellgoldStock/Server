@@ -5,13 +5,14 @@ namespace Steellg0ld\Core\managers;
 use pocketmine\entity\Entity;
 use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
+use pocketmine\level\particle\ExplodeParticle;
 use pocketmine\level\particle\Particle;
 use pocketmine\level\Position;
+use pocketmine\math\Vector3;
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
 
 class Spells{
-    public array $coords = [];
 
     const SPELLS = [
         0 => [
@@ -58,17 +59,10 @@ class Spells{
             $victim->cooldown_spell = time() + 10;
             $victim->sendTip(Plugin::PREFIX . Plugin::SECOND_COLOR . " Votre protection à été détruite, car un utilisateur de sort à essayé d'en éxécuté un sur vous " . Plugin::PREFIX);
             $damager->sendTip(Plugin::PREFIX . Plugin::BASE_COLOR . " " .$victim->getName() . Plugin::SECOND_COLOR . " était protégé(e), vous n'avez donc pas pu utiliser votre sort sur cette personne " . Plugin::PREFIX);
-            /**
-            TODO: Faire en sorte que la personne se fait propulser 10 bloc en arrière et emet des particules d'explosion, ou autre entre la position A (avant le TP) et B (après le TP) 
-            
-            Code: (IDK, faut que je voye comment je peut faire)
-            $damager->knockBack($victim,0, -10,-10);
-            $x = $victim->getX();
-            $y = $victim->getY();
-            $z = $victim->getZ();
-            $victim->teleport(new Position($x + 10, $y, $z, $victim->getLevel()));
-            array_push($this->coords);
-            **/
+
+            $vector = new Vector3(($damager->getX() - $victim->getX()), 1, ($damager->getZ() - $victim->getZ()));
+            $vector->normalize()->multiply(10);
+            $damager->setMotion($vector);
         }
     }
 
