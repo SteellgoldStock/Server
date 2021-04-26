@@ -26,6 +26,10 @@ class Player extends \pocketmine\Player {
         return Plugin::getInstance()->getSQL()->getPlayer($this->getName());
     }
 
+    public function getSettings(): array{
+        return Plugin::getInstance()->getSQL()->getSettings($this->getName());
+    }
+
     public function getGame(): String {
         return $this->game;
     }
