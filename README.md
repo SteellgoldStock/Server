@@ -11,4 +11,3 @@ Please make sure to update tests as appropriate.
 - @Virvolta
 - @AyzrixYTB
 - @UnNyanCat
-- 
