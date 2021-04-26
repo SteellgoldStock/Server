@@ -22,6 +22,6 @@ class ManaBarTask extends Task{
 
         $timeG = floor($this->player->mana / 10);
         $timeR = 10 - $timeG;
-        $this->player->sendTip(str_repeat(Plugin::MANA. "⬛", $timeG) . str_repeat("§7⬛", $timeR));
+        $this->player->sendTip(str_repeat(Plugin::MANA. "⬛", ($timeG <= 0 ? 0 : $timeG)) . str_repeat("§7⬛", ($timeR <= 0 ? 0 : $timeR)) . " §b(§7" . $this->player->mana . "§b)");
     }
 }
