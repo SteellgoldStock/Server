@@ -3,12 +3,11 @@
 namespace Steellg0ld\Core\managers;
 
 use pocketmine\entity\Entity;
+use pocketmine\item\Durable;
 use pocketmine\item\Item;
-use pocketmine\item\ItemIds;
 use pocketmine\level\particle\ExplodeParticle;
-use pocketmine\level\particle\Particle;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
+use pocketmine\Server;
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
 
@@ -63,20 +62,22 @@ class Spells{
             $vector = new Vector3(($damager->getX() - $victim->getX()), 1, ($damager->getZ() - $victim->getZ()));
             $vector->normalize()->multiply(10);
             $damager->setMotion($vector);
+            
+            $victim->getLevel()->addParticle(new ExplodeParticle($victim->asVector3()),Server::getInstance()->getOnlinePlayers());
         }
     }
 
     /**
      * @param Item $item
-     * @return Item
-     * Enlever 3 de durabilité à l'objet tenu par l'ennemi frappé
+     * @return bool|Int
+     * Modifier la durabilité à 3 de durabilité à l'objet tenu par l'ennemi frappé
      */
-    public function Reducto(Item $item): Item {
-        switch ($item->getId()) {
-            case ItemIds::DIAMOND_SWORD:
-                $item->setDamage(1562 - 3);
-                break;
+    public function Reducto(Item $item){
+        if($item instanceof Durable){
+            $item->applyDamage($item->getMaxDurability() - 3);
+            return $item;
+        }else{
+            return $item;
         }
-        return $item->setDamage($item->getDamage());
     }
 }
