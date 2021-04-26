@@ -3,17 +3,20 @@
 namespace Steellg0ld\Core\listeners;
 
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCreationEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemHeldEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\Item;
+use pocketmine\network\mcpe\protocol\ServerToClientHandshakePacket;
 use pocketmine\Server;
 use Steellg0ld\Core\forms\NaviguateUI;
 use Steellg0ld\Core\forms\SettingsUI;
 use Steellg0ld\Core\forms\SpellsBookUI;
 use Steellg0ld\Core\games\Combat;
+use Steellg0ld\Core\managers\Ranks;
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
 
@@ -32,6 +35,8 @@ class LPlayers implements Listener{
      */
     public function onJoin(PlayerJoinEvent $event){
         $player = $event->getPlayer();
+        $event->setJoinMessage(" ");
+        Server::getInstance()->broadcastTip(Plugin::BASE_COLOR." + ".Plugin::SECOND_COLOR.$player->getName().Plugin::BASE_COLOR." +");
         if(!$player instanceof Player) return;
 
         if(!$player->hasPlayedBefore()){
@@ -52,6 +57,8 @@ class LPlayers implements Listener{
      */
     public function onPlayerQuit(PlayerQuitEvent $event) : void{
         $player = $event->getPlayer();
+        $event->setQuitMessage("");
+        Server::getInstance()->broadcastTip(Plugin::ERROR_COLOR." + ".Plugin::SECOND_COLOR.$player->getName().Plugin::ERROR_COLOR." +");
         if(!$player instanceof Player) return;
         $inv = $player->getOffhandInventory();
         $item = $inv->getItemInOffhand();
@@ -59,6 +66,19 @@ class LPlayers implements Listener{
     }
 
     /**
+     * @param PlayerChatEvent $event
+     */
+    public function onChat(PlayerChatEvent $event){
+        $player = $event->getPlayer();
+        if(!$player instanceof Player) return;
+        $message = $event->getMessage();
+        $event->setCancelled();
+        if($player->getGame() === "NONE"){
+            Server::getInstance()->broadcastMessage(str_replace(array("{NAME}", "{MESSAGE}"), array($player->getName(), $message), Ranks::RANKS[$player->getStats()["rank"]]));
+        }
+    }
+
+     /**
      * @param PlayerItemHeldEvent $event
      * Annuler les déplacements d'items dans l'inventaire lors ce qu'il est au spawn
      */
