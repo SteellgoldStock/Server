@@ -1,0 +1,10 @@
+world:
+  x: 254
+  y: 4
+  z: 257
+  world: "world"
+combat:
+  x: 0
+  y: 4
+  z: 0
+  world: "combat"
