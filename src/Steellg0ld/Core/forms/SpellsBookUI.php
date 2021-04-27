@@ -19,6 +19,8 @@ class SpellsBookUI{
                         switch ($data){
                             case 3:
                                 $p->protego = true;
+                                $p->mana = $p->mana - Spells::SPELLS[$data]["name"];
+                                $p->cooldown_spell = Spells::SPELLS[$data]["cooldown"];
                                 $p->sendMessage(Plugin::PREFIX . " ".Plugin::SECOND_COLOR."Le sort ".Plugin::BASE_COLOR.Spells::SPELLS[$data]["name"].Plugin::SECOND_COLOR." a été appliqué, vous êtes maintenant protégé(e) du prochain sort qu'un adversaire peut vous infliger");
                                 break;
                             default:

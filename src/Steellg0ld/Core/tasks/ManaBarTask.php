@@ -16,7 +16,7 @@ class ManaBarTask extends Task{
     }
 
     public function onRun(int $currentTick){
-        if($this->player->getLevel() !== Server::getInstance()->getLevelByName("world") OR $this->player->game == "NONE"){
+        if($this->player->getLevel() !== Server::getInstance()->getLevelByName("combat") OR $this->player->game == "NONE"){
             Plugin::getInstance()->getScheduler()->cancelTask($this->getTaskId());
         }
 
