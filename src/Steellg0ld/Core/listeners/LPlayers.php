@@ -12,6 +12,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\ServerToClientHandshakePacket;
 use pocketmine\Server;
+use Steellg0ld\Core\forms\EnchantUI;
 use Steellg0ld\Core\forms\NaviguateUI;
 use Steellg0ld\Core\forms\SettingsUI;
 use Steellg0ld\Core\forms\SpellsBookUI;
@@ -44,9 +45,10 @@ class LPlayers implements Listener{
             Server::getInstance()->broadcastMessage(Plugin::PREFIX . Plugin::SECOND_COLOR . " " . $player->getName() . " c'est connecté(e) pour la première fois !");
         }
 
+        $player->setScale($player->getSettings()["size"]);
         $player->cooldown_spell = time();
         $player->cooldown = time();
-        $player->teleport(Plugin::getSpawn());
+        $player->teleportTo("world");
         $player->getInventory()->setContents([]);
         $player->getInventory()->setItem(4,Item::get(345));
         $player->getInventory()->setItem(1,Item::get(1002));
@@ -94,23 +96,33 @@ class LPlayers implements Listener{
      */
     public function onInteract(PlayerInteractEvent $event){
         $player = $event->getPlayer();
-        if(!$player instanceof Player) return;
-        if(!$player->getLevel() === Server::getInstance()->getLevelByName("world")) return;
-
-        if($player->cooldown < time()){
+        if (!$player instanceof Player) return;
+        if ($player->cooldown < time()) {
             $player->cooldown = time() + 1;
+            if (in_array($event->getItem()->getId(), [345, 1001, 1002])) {
+                $event->setCancelled();
+                if (!$player->getLevel() === Server::getInstance()->getLevelByName("world")) return;
 
-            switch ($event->getItem()->getId()){
-                case Item::COMPASS:
-                    NaviguateUI::openCompassUI($player);
-                    break;
-                case 1001:
-                    if($player->getGame() !== Combat::IDENTIFIER) return;
-                    SpellsBookUI::openBook($player);
-                    break;
-                case 1002:
-                    SettingsUI::openSettings($player);
-                    break;
+                switch ($event->getItem()->getId()) {
+                    case 345:
+                        NaviguateUI::openCompassUI($player);
+                        break;
+                    case 1001:
+                        if ($player->getGame() !== Combat::IDENTIFIER) return;
+                        SpellsBookUI::openBook($player);
+                        break;
+                    case 1002:
+                        SettingsUI::openSettings($player);
+                        break;
+                }
+            } elseif (in_array($event->getBlock()->getId(), [116])) {
+                $event->setCancelled();
+                switch ($event->getBlock()->getId()) {
+                    case 116:
+                        if ($player->getGame() !== Combat::IDENTIFIER) return;
+                        EnchantUI::openEnchantUI($player);
+                        break;
+                }
             }
         }
     }

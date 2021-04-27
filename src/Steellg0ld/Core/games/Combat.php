@@ -23,8 +23,11 @@ class Combat {
         $player->setGame(self::IDENTIFIER);
         Plugin::getInstance()->getScheduler()->scheduleRepeatingTask(new ManaBarTask($player), 20);
         $player->mana = 100;
+        $player->getArmorInventory()->setContents([]);
         $player->getInventory()->setContents([]);
-        $player->getInventory()->setItem(8,Item::get(1001));
+        $this->gameInventory($player);
+        $player->teleportTo("combat");
+        $player->setScale(1);
     }
 
     public function getPlayers(): array{
@@ -32,7 +35,21 @@ class Combat {
     }
 
     public function delPlayer(Player $player){
-        unset($this->players[array_search($player->getName(),$this->players)]);
+        unset($this->players[array_search($player->getName(), $this->players)]);
         $player->setGame("NONE");
+        $player->setScale($player->getSettings()["size"]);
+    }
+
+    public function gameInventory(Player $player){
+        $player->getArmorInventory()->setHelmet(Item::get(Item::IRON_HELMET));
+        $player->getArmorInventory()->setChestplate(Item::get(Item::DIAMOND_CHESTPLATE));
+        $player->getArmorInventory()->setLeggings(Item::get(Item::IRON_LEGGINGS));
+        $player->getArmorInventory()->setBoots(Item::get(Item::DIAMOND_BOOTS));
+
+        $player->getInventory()->setItem(0, Item::get(Item::DIAMOND_SWORD));
+        $player->getInventory()->setItem(1, Item::get(Item::GOLDEN_APPLE,0,16));
+        $player->getInventory()->setItem(2, Item::get(Item::BOW));
+        $player->getInventory()->setItem(3, Item::get(Item::ARROW,0,16));
+        $player->getInventory()->setItem(8, Item::get(1001));
     }
 }

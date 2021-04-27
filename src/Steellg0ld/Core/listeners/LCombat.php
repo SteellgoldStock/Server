@@ -2,27 +2,44 @@
 
 namespace Steellg0ld\Core\listeners;
 
-use pocketmine\entity\Effect;
-use pocketmine\entity\EffectInstance;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\entity\Effect;
+use pocketmine\entity\EffectInstance;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\item\Item;
-use pocketmine\item\Sword;
-use pocketmine\item\TieredTool;
+use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\Server;
+use Steellg0ld\Core\games\Combat;
 use Steellg0ld\Core\managers\Ranks;
 use Steellg0ld\Core\managers\Spells;
 use Steellg0ld\Core\Player;
 use Steellg0ld\Core\Plugin;
 
 class LCombat implements Listener{
+    public function onRespawn(PlayerRespawnEvent $event){
+        $player = $event->getPlayer();
+        if($player instanceof Player){
+            switch ($player->game){
+                case Combat::IDENTIFIER:
+                    $player->teleportTo("combat");
+                    break;
+
+            }
+        }
+    }
+
     /**
-     * @param EntityDamageByEntityEvent $event
-     */
-    public function onDamage(EntityDamageByEntityEvent $event){
+    public function playerShoot(EntityShootBowEvent $ev){
+        $arrow = $ev->getProjectile();
+
+        if ($arrow !== null and $arrow::NETWORK_ID == Entity::ARROW){
+            $ev->setForce($ev->getForce() + SQLData::getServerData("shootArrowDamage"));
+        }
+    }
+     **/
+
+    public function onDeath(EntityDamageByEntityEvent $event){
         $damager = $event->getDamager();
         $victim = $event->getEntity();
         $spells = new Spells();
@@ -63,33 +80,19 @@ class LCombat implements Listener{
                 $damager->sendPopup(Plugin::PREFIX_ERROR . Plugin::SECOND_COLOR . " Votre sort se recharge, veuillez attendre " . Plugin::ERROR_COLOR . ($damager->cooldown_spell - time()) . Plugin::SECOND_COLOR . " secondes " . Plugin::PREFIX_ERROR);
             }
         }
+
+        $victim->getPlayer()->getOffhandInventory()->clearAll();
+        Plugin::getInstance()->getSQL()->update("players", $damager->getName(), "xp",($damager->getStats()["xp"] + mt_rand(1,10)));
     }
 
-    /**
-     * @param PlayerDeathEvent $event
-     */
-    public function onDeath(PlayerDeathEvent $event) {
-        $cause = $event->getEntity()->getLastDamageCause();
-        if ($cause instanceof EntityDamageByEntityEvent) {
-            $killer = $cause->getDamager();
-            $victim = $event->getPlayer();
-            if($killer instanceof Player AND $victim instanceof Player){
-                $victim->getPlayer()->getOffhandInventory()->clearAll();
-                Plugin::getInstance()->getSQL()->update("players", $killer->getName(), "xp",($killer->getStats()["xp"] + mt_rand(1,10)));
-            }
-        }
-    }
 
-    /**
-     * @param PlayerQuitEvent $event
-     */
     public function onQuit(PlayerQuitEvent $event) {
         $player = $event->getPlayer();
         if(!$player instanceof Player) return;
         if($player->game !== "NONE"){
             switch ($player->game){
                 case "COMBAT":
-                    Plugin::getInstance()->getGame("COMBAT")->delPlayer($player);
+                    Plugin::getInstance()->getGame(Combat::IDENTIFIER)->delPlayer($player);
                     break;
             }
         }
