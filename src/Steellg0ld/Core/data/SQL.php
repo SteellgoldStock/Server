@@ -12,7 +12,7 @@ class SQL {
 
     public function init(){
         $this->getDatabase()->query("CREATE TABLE IF NOT EXISTS players (player TEXT, rank INT, xp INT)");
-        $this->getDatabase()->query("CREATE TABLE IF NOT EXISTS players_settings (player TEXT, show_os INT, receive_messages INT, reconnect INT, cps INT, ping INT, username TEXT, size FLOAT, particles INT, custom_os INT, pet INT)");
+        $this->getDatabase()->query("CREATE TABLE IF NOT EXISTS players_settings (player TEXT, show_os INT, receive_messages INT, reconnect INT, cps INT, ping INT, username TEXT, size INT, particles INT, custom_os INT, pet INT, auto_respawn INT)");
     }
 
     public function getPlayer($player): array {
