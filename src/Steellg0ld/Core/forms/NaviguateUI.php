@@ -19,6 +19,7 @@ class NaviguateUI
                         switch ($data) {
                             case 0:
                                 $p->sendMessage(Plugin::PREFIX . Plugin::SECOND_COLOR . " Connexion vers le jeu: " . Plugin::BASE_COLOR . "Magie & Combat" . Plugin::SECOND_COLOR . " !");
+                                // TODO: Auto servers for games
                                 Plugin::getInstance()->getGame("COMBAT")->addPlayer($p);
                                 break;
                         }
