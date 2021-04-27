@@ -4,8 +4,12 @@ namespace Steellg0ld\Core;
 
 use pocketmine\entity\Entity;
 use pocketmine\item\Item;
+use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\ContainerIds;
+use pocketmine\Server;
+use pocketmine\utils\Config;
 use Steellg0ld\Core\inventory\PlayerOffhandInventory;
 
 class Player extends \pocketmine\Player {
@@ -40,7 +44,7 @@ class Player extends \pocketmine\Player {
 
     public function dataCreation(){
         Plugin::getInstance()->getSQL()->getDatabase()->query("INSERT INTO players VALUES ('".$this->getName()."', 0,0)");
-        Plugin::getInstance()->getSQL()->getDatabase()->query("INSERT INTO players_settings VALUES ('".$this->getName()."',0,0,1,0,0,0,0,0,0,0)");
+        Plugin::getInstance()->getSQL()->getDatabase()->query("INSERT INTO players_settings VALUES ('".$this->getName()."',0,0,1,0,0,0,1,0,0,0,1)");
     }
 
     public function getLevelByXP(Int $xp){
@@ -59,5 +63,18 @@ class Player extends \pocketmine\Player {
         $this->addWindow($inv, ContainerIds::OFFHAND, true);
         $this->getDataPropertyManager()->setByte(Entity::DATA_COLOR, 0);
         return $this->inventories[$this->getRawUniqueId()] = $inv;
+    }
+
+    public function teleportTo(String $world) {
+        $config = Plugin::getInstance()->getConfigFile("Spawns")->get($world);
+        $this->teleport(new Position($config["x"], $config["y"], $config["z"], Server::getInstance()->getLevelByName($config["world"])));
+    }
+
+    public function isAllowed(Int ...$ranks): bool{
+        if(in_array($this->getStats()["rank"],$ranks)){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
